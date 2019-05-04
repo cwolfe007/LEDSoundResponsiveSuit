@@ -1,0 +1,9 @@
+digraph G {
+"init with constructor" -> "calculate the animation step for the current frame count" -> "progress the frame by incrementing the frame count" -> "Determine if end criteria is met";
+ 
+"Determine if end criteria is met" -> "If end criteria is met set indicator to show life cycle is complete";
+
+"Determine if end criteria is met" -> "If end criteria is not  met do not set indicator to show life cycle is complete" ->"calculate the animation step for the current frame count" ;
+
+"Constructor()" -> "animationStep()" -> "progressFrame()" -> "animationFinished()" -> "animationStep()"
+}

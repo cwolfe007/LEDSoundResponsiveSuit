@@ -1,0 +1,5 @@
+numpy
+neopixel
+pydevd
+Adafruit_MCP3008
+Adafruit_GPIO.SPI

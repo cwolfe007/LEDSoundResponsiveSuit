@@ -1,0 +1,24 @@
+digraph G {
+
+"Initialize Suit Sections, Spectrum Analyzer, and LED Strip" -> "Starts Main";
+
+"Starts Main" -> "Get Frequency Information";
+
+"Starts Main" -> "Build Animation Queue/Maps Animations to Frequencies";
+
+"Starts Main" -> "Play Animations";  
+
+"Starts Main" -> "Amplitude check" ;
+
+"Get Frequency Information" -> "Listen for audio samples" -> "Create FFT array" -> "Distinguish Frequency Buckets" -> "Add to Frequency Queue" -> "Listen for audio samples" ; 
+
+"Build Animation Queue/Maps Animations to Frequencies" -> "Poll the lastest Frequency conditions from Amp Check" -> "Pull from Frequency Queue" -> "Map Freqencies to Animations if amplitude conditions are met" -> "Add to animation Queue" -> "Pull from Frequency Queue"; 
+
+"Map Freqencies to Animations if amplitude conditions are met" -> "if not met, update frequency array with new amplitude piques";
+"Map Freqencies to Animations if amplitude conditions are met" -> "Update Frequency data with the latest amplitude piques" -> "Send to AmpCheck" -> "Poll the lastest Frequency conditions from Amp Check";
+
+"Play Animations" -> "Pull from Animation queue" -> "Go through Conditions and map Frequency information to sections of the suit" -> " populate the queues of the different secitons of the suit" -> "Generate Frame information" -> "Display Frame on LED Strip" -> "Pull from Animation queue" ;
+
+ "Amplitude check" -> "Poll the latest Frequency information from Buildanimations" -> "Change the amplitude conditions for adding animations (Allows the user to move closer and further from the sound source and normalizes the animations playing)" -> "Update the frequency array with new frequency conditions by decrimenting the piques" -> "Poll the latest Frequency information from Buildanimations";
+
+}

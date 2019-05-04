@@ -1,0 +1,19 @@
+digraph G {
+ 
+"Microphone input" -> "Audio Samples taken" -> "Numpy FFT" -> "Frequency buckets created";
+
+"Frequency buckets created" -> "Microphone input" [style=bold, label = " Runs in Parrellel"];
+
+"Frequency buckets created" -> "Animations Mapped to Frequencies"  [style=bold, label = " Runs in Parrellel"]; 
+
+"Animations Mapped to Frequencies" -> "Animations added to Queue"; 
+
+"Animations added to Queue" -> "Animations in queue are added to Frame" -> "Frame is generated" -> "Frame information is displayed on the LED Strip" -> "Animations are either determined to end or contiue"; 
+
+"Animations are either determined to end or contiue" -> "Animation has completed life cycle" -> "Animation Ends and is not put back into the queue";
+
+"Animations are either determined to end or contiue" -> "Animation has not yet completed life cycle";
+
+"Animation has not yet completed life cycle" -> "Animations added to Queue" [style=bold, label = " Runs in Parrellel"];
+}
+
