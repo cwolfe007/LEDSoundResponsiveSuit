@@ -4,7 +4,6 @@
 # Author: Caleb Wolfe
 # Date of Creation: 6/2/2018
 import time
-#import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import numpy as np
 from neopixel import *
@@ -13,12 +12,10 @@ import section #sections of the suit to light up
 from stepanimation import * #simple step animation
 from spectrumanalyzer import SpectrumAnalyzer
 from Queue import Queue
-#import sys
-#import pydevd
 from multiprocessing import Process, Pipe
 from multiprocessing import  Queue as MQueue 
 from multiprocessing import  Lock
-#import os
+
 
 class Suit:
 
