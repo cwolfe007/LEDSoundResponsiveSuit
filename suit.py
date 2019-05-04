@@ -107,7 +107,7 @@ def ampCheck(conns):
 			conns.send(ampinit)
 
 				
-def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
+def buildAnimations(mqtriggers,mqaminations,connr):
 
 		amp=np.array([60.0, 5.0, 5.0, 5.0, 3.0,3.0,3.0,3.0,3.0,2.0,2.0,2.0,2.0])
 		while True:
@@ -216,7 +216,7 @@ def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
 				
 					connr.send(ampArr)
 	
-def playAnimations(suit,mqanimation): #Takes about .3s an animations to complete across 50 pixels
+def playAnimations(suit,mqanimation):
 	suit.strip.begin()
 	count = 0
 	while True:
@@ -366,7 +366,7 @@ def playAnimations(suit,mqanimation): #Takes about .3s an animations to complete
 
 							strip.setPixelColor(pixels[0], pixels[1]) # Setting a pixel is constant time 
 		
-		strip.show() #original show positon (Showing a pixel is n time)
+		strip.show() 
 		count += 1
 
 		for sect in suit.sectionsList:
