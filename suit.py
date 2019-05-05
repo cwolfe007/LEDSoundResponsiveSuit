@@ -15,7 +15,7 @@ from Queue import Queue
 from multiprocessing import Process, Pipe
 from multiprocessing import  Queue as MQueue 
 from multiprocessing import  Lock
-from sys import maxsize
+
 
 
 class Suit:
@@ -66,7 +66,7 @@ class Suit:
 		
 def getFreqInfo(suit,mqtriggers):
 		
-		while True: #This takes apx. .12 secs 
+		while True: 
 			
 			if not mqtriggers.full():
 				
@@ -221,6 +221,7 @@ def buildAnimations(mqtriggers,mqaminations,connr):
 				
 					connr.send(ampArr)
 	
+
 def playAnimations(suit,mqanimation,mqframes): #Takes about .3s an animations to complete across 50 pixels
 
 	count = 0
@@ -374,7 +375,7 @@ def playAnimations(suit,mqanimation,mqframes): #Takes about .3s an animations to
 							frame.append(ftup)
 
 		mqframes.put_nowait(frame)
-		
+
 		count += 1
 
 		for sect in suit.sectionsList:
@@ -385,16 +386,14 @@ def playFrames(suit, mqframes):
 		while True:
 			
 			if not mqframes.empty():
-				#print ("Pulling Frame from frame queue")
+		
 				frame = mqframes.get_nowait()
 				suit.blackout()
-				#time.sleep(.01)	
+	
 				for pixels in frame:
-					#suit.blackoutPixel(pixels[0])
-					#print ("Pix: " + str(pixels[0] ))
+
 					strip.setPixelColor(pixels[0], pixels[1])
-					#
-				#pydevd.settrace('192.168.1.12',port=5678)
+
 				strip.show()
 	
 

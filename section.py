@@ -3,6 +3,7 @@ from sparkleanimation import *
 from meteorrain import *
 from ampanimation import *
 import time
+import math
 
 class Section:
 
