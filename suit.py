@@ -4,7 +4,6 @@
 # Author: Caleb Wolfe
 # Date of Creation: 6/2/2018
 import time
-#import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import numpy as np
 from neopixel import *
@@ -13,12 +12,11 @@ import section #sections of the suit to light up
 from stepanimation import * #simple step animation
 from spectrumanalyzer import SpectrumAnalyzer
 from Queue import Queue
-#import sys
-#import pydevd
 from multiprocessing import Process, Pipe
 from multiprocessing import  Queue as MQueue 
 from multiprocessing import  Lock
-#import os
+from sys import maxsize
+
 
 class Suit:
 
@@ -79,7 +77,9 @@ def getFreqInfo(suit,mqtriggers):
 				mqtriggers.put_nowait(buckets)
 			
 def ampCheck(conns):
-	#Adjusts the amplitude sensitivity to ajust for different environments
+	#Adjusts the amplitude to adjust for dynamic environments 
+
+
 	ampinit = np.array([61.0, 5.0, 5.0, 5.0, 3.0,3.0,3.0,3.0,3.0,2.0,2.0,2.0,2.0]) #Persisting array that gets updated
 	start = np.array([55.0, 5.0, 5.0, 5.0, 3.0,3.0,3.0,3.0,3.0,2.0,1.0,1.0,1.0]) # Original values and minimum amplitudes
 	dropval = np.array([3.0, .5, .5, .5, 2.0,2.0,2.0,1.0,.2,.2,.5,.1,.1])
@@ -110,7 +110,7 @@ def ampCheck(conns):
 			conns.send(ampinit)
 
 				
-def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
+def buildAnimations(mqtriggers,mqaminations,connr):
 
 		amp=np.array([60.0, 5.0, 5.0, 5.0, 3.0,3.0,3.0,3.0,3.0,2.0,2.0,2.0,2.0])
 		while True:
@@ -120,6 +120,7 @@ def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
 				if not mqtriggers.empty() and not mqaminations.full() and  ampcheckvals.size > 0: #check to see if animation queue is full and if so wait until opening
 					buckets = mqtriggers.get_nowait()
 					list = []
+
 					#--------------Generate Frame---------------
 					count = 0
 					
@@ -212,6 +213,7 @@ def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
 								 amp.append(ampcheckvals[count])									
 						count +=1
 					if list and not mqaminations.full(): #if list is full and animation q is not full
+
 						mqaminations.put_nowait(list)
 				
 				
@@ -219,17 +221,17 @@ def buildAnimations(mqtriggers,mqaminations,connr): #Takes about .0004 secs
 				
 					connr.send(ampArr)
 	
-def playAnimations(suit,mqanimation): #Takes about .3s an animations to complete across 50 pixels
-	suit.strip.begin()
+def playAnimations(suit,mqanimation,mqframes): #Takes about .3s an animations to complete across 50 pixels
+
 	count = 0
 	while True:
 		st = time.clock()
 		suit.blackout()
-		
+
 		if not mqanimation.empty():
-			
+
 			animations = mqanimation.get_nowait()
-			#pydevd.settrace('192.168.1.19',port=5678)
+
 
 			for animation in animations:
 				if animation[0] == "highhigh":
@@ -361,37 +363,61 @@ def playAnimations(suit,mqanimation): #Takes about .3s an animations to complete
 					suit.backRightBottom.addAnimation(animation[1],animation[2])
 
 
+		totalanimations= 0 
+		frame=[]
 		for sect in suit.sectionsList : #Assumption here is that no 2 sections share pixels
 				while sect.getNextAnimation(): #animation queue is not empty
-			
+
 
 					for pixels in sect.playAnmimation():
+							ftup=((pixels[0], pixels[1]))
+							frame.append(ftup)
 
-							strip.setPixelColor(pixels[0], pixels[1]) # Setting a pixel is constant time 
+		mqframes.put_nowait(frame)
 		
-		strip.show() #original show positon (Showing a pixel is n time)
 		count += 1
 
 		for sect in suit.sectionsList:
 			sect.progressAnimations() 		
+		time.sleep(.01)	
+def playFrames(suit, mqframes):
+
+		while True:
 			
-			#--------------Generate Frame V1------------------
+			if not mqframes.empty():
+				#print ("Pulling Frame from frame queue")
+				frame = mqframes.get_nowait()
+				suit.blackout()
+				#time.sleep(.01)	
+				for pixels in frame:
+					#suit.blackoutPixel(pixels[0])
+					#print ("Pix: " + str(pixels[0] ))
+					strip.setPixelColor(pixels[0], pixels[1])
+					#
+				#pydevd.settrace('192.168.1.12',port=5678)
+				strip.show()
+	
 
 if __name__ == '__main__':
     s = Suit()
     connr,conns = Pipe()
     strip = s.strip
+    strip.begin()
     mqtrigger = MQueue(maxsize = 3)
-    mqanimation = MQueue(maxsize = 2)
+    mqanimation = MQueue()
+    mqframes = MQueue()
     pa = Process(target=getFreqInfo, args=(s,mqtrigger))
     pb = Process(target=buildAnimations, args=(mqtrigger,mqanimation,connr))
-    p2 = Process(target=playAnimations, args=(s,mqanimation))
+    p2 = Process(target=playAnimations, args=(s,mqanimation,mqframes))
     pc = Process(target=ampCheck,args=(conns,))
+    pf = Process(target=playFrames,args=(s,mqframes))
     pa.start()
     pb.start()
     p2.start()
     pc.start()
+    pf.start()
     pa.join()
     pb.join()
     p2.join()
     pc.join()
+    pf.join()
