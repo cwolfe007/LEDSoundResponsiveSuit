@@ -1,5 +1,7 @@
 # LED Sound Responsive Suit
 
+## NOTE: This current version requires dependency updates, due to no longer supported libraries, and refactors. It has been updated with poetry and reformatted for readability. New versions will be released as time allows
+
 This is the repository for the source code for the Suit-Zero sound-reactive light-up suit. This suit performs audio spectrum analysis to react with animations in real-time to music in almost all settings. The suit will display animations according to different frequency ranges. The code is easily configurable so that it is simple to change what type of animations can be played as a reaction to any given frequency on any given part of the LED strip. For example, if a bass frequency is detected, it is simple to tell the code what animation (e.g., Sparkles, any color line, or meteor rain) and to play the animation at a particular section (e.g., left collar, right back, top part of the left collar, etc.). This type of flexibility allows this code to be configured for many different types of applications, such as coats of all varieties, pants, shirts, dresses, and, with the right power supply, rooms and furniture.
 
 See it working at [YouTube Video](https://youtu.be/8mMCY5qn3_M).
